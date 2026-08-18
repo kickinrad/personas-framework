@@ -14,6 +14,7 @@ from pathlib import Path
 MODEL = "claude-opus-4-6[1m]"
 DISCORD_PERSONAS = {"bob", "flora", "julia"}
 ARCHIVE_PARTS = {"archive", "archives", "consumed", "history", "historical", ".git", "node_modules", "__pycache__"}
+RELEASE_VERSION = re.compile(r"^v?\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$")
 RETIRED_REFERENCES = ("persona.md", "folder bridge", "bridgey inbox", "four-week review")
 RESIDENT_HEADINGS = re.compile(
     r"^#{1,6}\s+(?:tools?(?:\s+(?:inventory|available))?|procedures?|workflows?|rituals?|integrations?)\b",
@@ -22,7 +23,10 @@ RESIDENT_HEADINGS = re.compile(
 
 
 def is_active(path: Path, root: Path) -> bool:
-    return not any(part.lower() in ARCHIVE_PARTS for part in path.relative_to(root).parts)
+    parts = path.relative_to(root).parts
+    if any(part.lower() in ARCHIVE_PARTS for part in parts):
+        return False
+    return not (len(parts) >= 4 and parts[0] == "releases" and RELEASE_VERSION.fullmatch(parts[2]))
 
 
 def tracked_files(repo: Path) -> set[Path]:

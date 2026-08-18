@@ -57,6 +57,18 @@ class FleetVerifierTest(unittest.TestCase):
             (archive / "old.md").write_text("PERSONA.md, Folder Bridge, and four-week review", encoding="utf-8")
             self.assertEqual(VERIFIER.verify(root), [])
 
+    def test_versioned_release_is_history_but_other_active_files_are_not(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            persona = self.create_persona(root)
+            release = persona / "releases/component/2.15.4"
+            release.mkdir(parents=True)
+            (release / "RELEASE.md").write_text("Folder Bridge recovery artifact", encoding="utf-8")
+            self.assertEqual(VERIFIER.verify(root), [])
+            (persona / "user/memory/MEMORY.md").parent.mkdir(parents=True)
+            (persona / "user/memory/MEMORY.md").write_text("Folder Bridge", encoding="utf-8")
+            self.assertIn("user/memory/MEMORY.md", "\n".join(VERIFIER.verify(root)))
+
     def test_only_named_personas_may_enable_discord(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
