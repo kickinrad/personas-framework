@@ -67,7 +67,8 @@ def load_mcps(persona: Path) -> dict[str, dict[str, object]]:
         result[str(name)] = raw
     return result
 
-def toml_string(value: str) -> str: return json.dumps(value)
+def toml_string(value: str) -> str:
+    return json.dumps(value, ensure_ascii=False)
 def codex_mcp(mcps: dict[str, dict[str, object]]) -> str:
     blocks = []
     for name, item in mcps.items():

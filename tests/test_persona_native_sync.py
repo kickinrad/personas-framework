@@ -16,7 +16,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
     def fixture(self, directory: Path, mcp: dict | None = None) -> Path:
         persona = directory / "atlas-review"
         persona.mkdir()
-        (persona / "AGENTS.md").write_text("# Atlas Review\n\n> Reviews small changes carefully.\n", encoding="utf-8")
+        (persona / "AGENTS.md").write_text("# Atlas Review\n\n> 🧭 Reviews small changes carefully.\n", encoding="utf-8")
         if mcp is not None: (persona / ".mcp.json").write_text(json.dumps({"mcpServers": mcp}), encoding="utf-8")
         return persona
 
@@ -34,6 +34,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
             self.assertIn(str((persona / "AGENTS.md").resolve()), agent); self.assertNotIn("# Atlas Review", agent)
             parsed = tomllib.loads((codex / "agents/atlas-review.toml").read_text(encoding="utf-8"))
             self.assertEqual(parsed["name"], "atlas-review")
+            self.assertEqual(parsed["description"], "🧭 Reviews small changes carefully.")
 
     def test_mcp_translation_and_collision_protection(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
