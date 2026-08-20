@@ -41,7 +41,7 @@ credentials stop the run.
 After reviewing the exact paths, remove obsolete framework stamps, the public
 `bin/personas` CLI, Cloud repository markers, visibility adapters, generated
 privacy workflows, publishing guards, and default persona hooks. They are not
-part of the 5.0.0 folder contract.
+part of the current folder contract.
 
 Cloud uses the same publishable folder. A private repository is recommended for
 personalized use, but visibility is user-managed and credentials remain
