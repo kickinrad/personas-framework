@@ -35,6 +35,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
             parsed = tomllib.loads((codex / "agents/atlas-review.toml").read_text(encoding="utf-8"))
             self.assertEqual(parsed["name"], "atlas-review")
             self.assertEqual(parsed["description"], "🧭 Reviews small changes carefully.")
+            self.assertEqual(tomllib.loads((codex / "persona-atlas-review.config.toml").read_text(encoding="utf-8")), {})
 
     def test_mcp_translation_and_collision_protection(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

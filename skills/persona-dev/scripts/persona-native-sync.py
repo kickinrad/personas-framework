@@ -90,7 +90,7 @@ def rendered(slug: str, name: str, description: str, agents: Path, digest: str, 
     codex = f"{meta}name = {toml_string(slug)}\ndescription = {toml_string(description)}\ndeveloper_instructions = {toml_string(f'Read and follow {agents}.')}\n"
     if mcp:
         codex += f"\n{mcp}\n"
-    config = None if not mcp else f"{meta}\n{mcp}\n"
+    config = f"{meta}\n{mcp}\n"
     return claude, codex, config
 
 def safe_write(path: Path, content: str, apply: bool) -> str:
@@ -116,7 +116,7 @@ def main() -> int:
         if args.runtime in ("claude", "all"): print(safe_write(args.claude_home / "agents" / f"{slug}.md", claude, args.apply))
         if args.runtime in ("codex", "all"):
             print(safe_write(args.codex_home / "agents" / f"{slug}.toml", codex, args.apply))
-            if config: print(safe_write(args.codex_home / f"persona-{slug}.config.toml", config, args.apply))
+            print(safe_write(args.codex_home / f"persona-{slug}.config.toml", config, args.apply))
         print("Claude path access must permit the live AGENTS.md; global Claude permissions are unchanged.")
         return 0
     except (OSError, ValueError, json.JSONDecodeError) as error:
