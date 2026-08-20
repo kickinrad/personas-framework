@@ -8,6 +8,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 SCRIPT = Path(__file__).with_name("verify-fleet.py")
@@ -75,6 +76,15 @@ class FleetVerifierTest(unittest.TestCase):
             persona = self.create_persona(root, "julia")
             (persona / ".claude-flags").write_text("--channels plugin:discord@claude-plugins-official", encoding="utf-8")
             self.assertEqual(VERIFIER.verify(root), [])
+
+    def test_deleted_optional_runtime_file_does_not_crash_current_tree_scan(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            persona = self.create_persona(root)
+            deleted = persona / ".claude-flags"
+            tracked = {path for path in persona.rglob("*") if path.is_file()} | {deleted}
+            with patch.object(VERIFIER, "tracked_files", return_value=tracked):
+                self.assertEqual(VERIFIER.verify(root), [])
 
 
 if __name__ == "__main__":

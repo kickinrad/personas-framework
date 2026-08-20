@@ -92,7 +92,10 @@ def verify_persona(repo: Path) -> list[str]:
         if data.get("model") != MODEL:
             errors.append(f"{name}: {settings.relative_to(repo)} model must be {MODEL}")
 
-    runtime_files = [path for path in tracked if path.name == ".claude-flags" or claude_settings(path, repo)]
+    runtime_files = [
+        path for path in tracked
+        if path.is_file() and (path.name == ".claude-flags" or claude_settings(path, repo))
+    ]
     discord_enabled = any("discord@claude-plugins-official" in path.read_text(encoding="utf-8") for path in runtime_files)
     if discord_enabled and name not in DISCORD_PERSONAS:
         errors.append(f"{name}: Discord is only permitted for Bob, Flora, and Julia")
