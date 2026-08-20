@@ -42,9 +42,11 @@ class PersonaNativeSyncTest(unittest.TestCase):
             persona = self.fixture(root, {"local": {"command": "tool", "args": ["serve"], "env": {"TOKEN": "${LOCAL_TOKEN}"}}, "remote": {"type": "streamable-http", "url": "https://example.test/mcp"}})
             result = self.invoke(persona, claude, codex, "--apply")
             self.assertEqual(result.returncode, 0, result.stderr)
-            config = tomllib.loads((codex / "agents/persona-atlas-review.config.toml").read_text(encoding="utf-8"))
+            config = tomllib.loads((codex / "persona-atlas-review.config.toml").read_text(encoding="utf-8"))
             self.assertEqual(config["mcp_servers"]["local"]["command"], "tool")
             self.assertEqual(config["mcp_servers"]["local"]["env"]["TOKEN"], "${LOCAL_TOKEN}")
+            agent = tomllib.loads((codex / "agents/atlas-review.toml").read_text(encoding="utf-8"))
+            self.assertEqual(agent["mcp_servers"], config["mcp_servers"])
             target = claude / "agents/atlas-review.md"; target.write_text("manual", encoding="utf-8")
             self.assertEqual(self.invoke(persona, claude, codex, "--apply").returncode, 2)
 
