@@ -64,6 +64,39 @@ class PersonaNativeSyncTest(unittest.TestCase):
             bad = self.invoke(persona, claude, codex, "--codex-mcp", "missing")
             self.assertEqual(bad.returncode, 2)
 
+    def test_unselected_claude_only_binding_is_not_validated_for_codex(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); claude = root / "claude"; codex = root / "codex"
+            persona = self.fixture(root, {
+                "codex": {"command": "tool"},
+                "claude-only": {"type": "sse", "url": "not-a-codex-transport"},
+            }, ["codex"])
+            result = self.invoke(persona, claude, codex, "--runtime", "codex", "--apply")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            config = tomllib.loads((codex / "persona-atlas-review.config.toml").read_text())
+            self.assertEqual(set(config["mcp_servers"]), {"codex"})
+
+    def test_profile_only_never_touches_native_agent(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); claude = root / "claude"; codex = root / "codex"
+            persona = self.fixture(root, {"local": {"command": "tool"}}, ["local"])
+            agent = codex / "agents/atlas-review.toml"
+            agent.parent.mkdir(parents=True)
+            agent.write_text("manual = true\n", encoding="utf-8")
+            result = self.invoke(persona, claude, codex, "--runtime", "codex", "--codex-artifact", "profile", "--apply")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(agent.read_text(encoding="utf-8"), "manual = true\n")
+            self.assertTrue((codex / "persona-atlas-review.config.toml").is_file())
+
+    def test_agent_only_never_creates_profile(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); claude = root / "claude"; codex = root / "codex"
+            persona = self.fixture(root)
+            result = self.invoke(persona, claude, codex, "--runtime", "codex", "--codex-artifact", "agent", "--apply")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue((codex / "agents/atlas-review.toml").is_file())
+            self.assertFalse((codex / "persona-atlas-review.config.toml").exists())
+
     def test_prunes_only_marked_legacy_profile_agent(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw); claude = root / "claude"; codex = root / "codex"
@@ -78,9 +111,9 @@ class PersonaNativeSyncTest(unittest.TestCase):
     def test_rejects_unsupported_mcp_and_credentials(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw); claude = root / "claude"; codex = root / "codex"
-            persona = self.fixture(root, {"bad": {"type": "sse", "url": "https://example.test"}})
+            persona = self.fixture(root, {"bad": {"type": "sse", "url": "https://example.test"}}, ["bad"])
             self.assertEqual(self.invoke(persona, claude, codex).returncode, 2)
-            (persona / ".mcp.json").write_text(json.dumps({"mcpServers": {"bad": {"command": "tool", "env": {"TOKEN": "literal"}}}}), encoding="utf-8")
+            (persona / ".mcp.json").write_text(json.dumps({"mcpServers": {"bad": {"command": "tool", "env": {"TOKEN": "literal"}}}, "codexMcpServers": ["bad"]}), encoding="utf-8")
             self.assertEqual(self.invoke(persona, claude, codex).returncode, 2)
 
 if __name__ == "__main__": unittest.main(verbosity=2)
