@@ -58,8 +58,10 @@ approval to install runtime state. The helper generates adapters that read the
 live absolute `AGENTS.md`; it never copies identity prose or private MCP
 bindings. Pass a named `--codex-mcp <binding>` only after validating an
 equivalent role-bound Codex provider; Claude-only bindings never project by
-default. It reports the Claude path-access requirement and never changes global
-Claude permissions.
+default. Use `--codex-artifact profile` when reconciling only the persona MCP
+layer; that mode never creates, changes, or retires native Codex agents. It
+reports the Claude path-access requirement and never changes global Claude
+permissions.
 
 ## Verify
 
