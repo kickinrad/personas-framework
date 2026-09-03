@@ -10,16 +10,15 @@ private local context, and external knowledge sources distinct.
 
 ## Create
 
-1. Discover the desired name, role, outcomes, voice, boundaries, workflows,
-   local context, and target runtimes. Ask only questions that materially
-   change the folder.
+1. Discover the name, role, outcomes, voice, boundaries, workflows, context,
+   and runtimes. Ask only questions that materially change the folder.
 2. Read the templates in `assets/`. Read `references/environments.md` when
    choosing a home across native, WSL, Windows, Desktop, or Cowork. Read
    `references/launch-flags.md` when configuring a Claude launcher. Read
    `references/research-toolkit.md` when the persona needs a new capability.
-3. Present one complete folder plan. Include the portable `AGENTS.md`, importing
-   `CLAUDE.md`, shared skills, minimal native settings, ignored local context,
-   and any requested integration. Write nothing before approval.
+3. Present a folder plan covering `AGENTS.md`, importing `CLAUDE.md`, shared
+   skills, native settings, ignored context, and requested integration. Write
+   nothing before approval.
 4. After approval, create the folder directly with normal file operations:
    - `AGENTS.md` owns identity, voice, role, boundaries, and shared doctrine;
    - `CLAUDE.md` imports `AGENTS.md` for Claude Code;
@@ -27,8 +26,7 @@ private local context, and external knowledge sources distinct.
      project settings;
    - `skills/` contains portable role workflows;
    - `user/` contains optional ignored profile and explicit memory.
-5. Replace every template placeholder with reviewed persona-specific content.
-   Do not leave generic role filler in a finished persona.
+5. Replace every placeholder with reviewed persona-specific content.
 6. Create no hook merely for symmetry, reminders, framework drift, repository
    visibility, or memory simulation.
 7. Keep everything tracked in Git safe to publish. Never put profile, memory,
