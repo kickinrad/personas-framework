@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.2.0 — 2026-09-01
+
+### Changed
+
+- Added independent Codex profile and native-agent generation.
+- Limited Codex MCP validation and projection to explicitly selected bindings,
+  preserving Claude-only transports without weakening profile validation.
+
 ## 6.0.0 — 2026-08-20
 
 ### Changed
